@@ -7,3 +7,6 @@ lazy val root = (project in file("."))
     name := "newsapietl",
     idePackagePrefix := Some("dev.jszafran")
   )
+
+libraryDependencies += "com.softwaremill.sttp.client3" %% "core" % "3.6.2"
+libraryDependencies += "com.lihaoyi" %% "requests" % "0.7.0"
