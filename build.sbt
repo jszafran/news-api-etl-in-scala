@@ -10,3 +10,4 @@ lazy val root = (project in file("."))
 
 libraryDependencies += "com.softwaremill.sttp.client3" %% "core" % "3.6.2"
 libraryDependencies += "com.lihaoyi" %% "requests" % "0.7.0"
+libraryDependencies += "com.lihaoyi" %% "ujson" % "0.9.6"
