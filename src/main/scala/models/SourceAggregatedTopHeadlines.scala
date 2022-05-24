@@ -3,5 +3,5 @@ package models
 
 case class SourceAggregatedTopHeadlines(
     source_id: String,
-    top_headlines: List[TopHeadline]
+    topHeadlines: List[TopHeadline]
 )
