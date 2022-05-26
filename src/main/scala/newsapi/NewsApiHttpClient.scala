@@ -4,16 +4,18 @@ package newsapi
 import models.{NewsSource, SourceTopHeadline}
 import traits.NewsApiClient
 
+import jsonparsers.JsonModelParser
+
 class NewsApiHttpClient(
     val apiKey: String,
     val apiUrl: String = "https://newsapi.org/v2/"
 ) extends NewsApiClient {
+
   private val session =
     requests.Session(headers = Map("X-Api-Key" -> this.apiKey))
 
-  override def getTopHeadlines(
-      sources: List[NewsSource]
-  ): List[SourceTopHeadline] = ???
+  private def makeGetRequest(endpoint: String): requests.Response =
+    session.get(s"$apiUrl/$endpoint")
 
   override def getSources(language: Option[String]): List[NewsSource] = {
     val queryString = language match {
@@ -21,17 +23,17 @@ class NewsApiHttpClient(
       case None        => ""
     }
     val resp = makeGetRequest(s"sources$queryString")
-    parseSources(resp)
+    JsonModelParser.parseNewsSources(resp)
   }
 
-  private def makeGetRequest(endpoint: String): requests.Response =
-    session.get(s"$apiUrl/$endpoint")
-
-  private def parseSources(resp: requests.Response): List[NewsSource] = {
-    ujson
-      .read(resp.bytes)("sources")
-      .arr
-      .map(obj => NewsSource(id = obj("id").str, name = obj("name").str))
-      .toList
+  override def getTopHeadlines(
+      sources: List[NewsSource]
+  ): List[SourceTopHeadline] = {
+    val queryString = sources match {
+      case Nil => ""
+      case _   => s"?sources=${sources.map(_.id).mkString(",")}&page_size=100"
+    }
+    val resp = makeGetRequest(s"top-headlines/$queryString")
+    JsonModelParser.parseTopHeadlines(resp)
   }
 }
