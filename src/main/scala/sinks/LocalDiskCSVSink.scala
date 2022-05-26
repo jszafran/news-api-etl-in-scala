@@ -25,6 +25,7 @@ class LocalDiskCSVSink(val dirPath: String) extends Sink {
         Paths.get(dirPath, s.sourceId, s"${timestamp}_headlines.csv").toFile
       val writer = CSVWriter.open(csvFile)
       writer.writeAll(s.topHeadlines.map(x => List(x.title)))
+      writer.close()
     })
   }
 }
